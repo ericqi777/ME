@@ -1,0 +1,30 @@
+.btn-bd-download {
+    font-weight: 500;
+    color: #ffe484;
+    border-color: #ffe484;
+}
+
+.navbar .navbar-brand{
+    color: #ffe484;
+    font-weight: 200;
+}
+
+.navbar {
+    background-color: #343434;
+}
+
+.fill { 
+    min-height: 100%;
+    height: 100%;
+}
+
+.sidenav {
+  background-color: #2d4059;
+}
+
+
+
+.app {
+    scroll-behavior: smooth;
+}
+

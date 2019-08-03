@@ -1,0 +1,45 @@
+.heading {
+    margin-top: 10%;
+    margin-bottom: 3%;
+}
+
+.container{
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+#emojionearea1 {
+    height: 60px;
+}
+
+#selectedImage {
+    margin-top: 5px;
+    padding-left: 0px;
+}
+
+#imageUpload {
+    margin-top: 10px;
+}
+
+.alert {
+    width: 200px, auto;
+    margin-top: 5px;
+}
+
+.text-primary {
+    margin-bottom: 10px;
+}
+
+.big-mar {
+    margin-top: 50px;
+}
+
+.modal-title {
+    margin-left: 5%;
+    margin-top: 5%;
+}
+
+.modal-body {
+    margin-left: 5%;
+}
+

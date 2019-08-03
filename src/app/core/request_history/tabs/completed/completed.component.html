@@ -1,0 +1,97 @@
+<form>
+    <div class="form-group form-inline">
+        搜索列表: <input class="form-control ml-2" type="text" name="searchTerm" [(ngModel)]="service.searchTerm" />
+        <span class="ml-3" *ngIf="service.loading$ | async">正在加载...</span>
+    </div>
+
+    <div class="table-wrap">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">提交时间</th>
+                    <th scope="col">短信内容</th>
+                    <th scope="col" sortable="creditCost" (sort)="onSort($event)">配额消耗</th>
+                    <th scope="col">发送状态</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let request of ( requests$ | async )?.slice().reverse()">
+                    <td>
+                        <ngb-highlight [result]="request.createdAt" [term]="service.searchTerm"></ngb-highlight>
+                    </td>
+                    <td>
+                        <ngb-highlight
+                            [result]="request.textContent.length > 40 ? request.textContent.substring(0,38) + '...' : request.textContent"
+                            [term]="service.searchTerm"></ngb-highlight>
+                    </td>
+                    <td>
+                        <ngb-highlight [result]="request.creditCost | number" [term]="service.searchTerm">
+                        </ngb-highlight>
+                    </td>
+                    <td>
+                        <ngb-highlight style="color: #2fb462" [result]="request.requestStatus" [term]="service.searchTerm"></ngb-highlight>
+                    </td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm" style="margin-right: 1px"
+                            (click)="viewDetail(content, request)">查看详情</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between p-2">
+        <ngb-pagination [collectionSize]="total$ | async" [(page)]="service.page" [pageSize]="service.pageSize">
+        </ngb-pagination>
+
+        <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
+            <option [ngValue]="10">每页10条</option>
+            <option [ngValue]="20">每页20条</option>
+            <option [ngValue]="30">每页30条</option>
+        </select>
+    </div>
+
+</form>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title text-primary" id="modal-basic-title">短信申请详情</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <div class="row">
+                <form class="col-sm-6">
+                    <div class="form-group">
+                        <label class="text-primary">申请时间：</label>
+                        <a> {{previewRequest.createdAt}}</a>
+                        <p></p>
+                        <label class="text-primary">短信内容：</label>
+                        <p style="white-space: pre-wrap"> {{previewRequest.textContent}} </p>
+                        <label class="text-primary">计价规则 （发送数量 * 单次条数）</label>
+                        <p> {{previewRequest.sentVolume}}次 * {{ previewRequest.creditCost / previewRequest.sentVolume }}
+                            条/次</p>
+                        <label class="text-primary">配额消耗：</label>
+                        <p> {{previewRequest.creditCost}} </p>
+                        <label class="text-primary">申请状态：</label>
+                        <p style="color: #2fb462">发送完成</p>
+                    </div>
+                </form>
+                <div class="col-sm-6" *ngIf="previewRequest.imageUrl">
+                    <div class="image-preview">
+                        <label class="text-primary">待发送图片：</label>
+                        <div class="card" style="width: 18rem;">
+                            <img [src]="previewRequest.imageUrl" class="card-img-top">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">返回</button>
+    </div>
+</ng-template>

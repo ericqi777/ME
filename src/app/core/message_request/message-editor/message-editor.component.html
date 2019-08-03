@@ -1,0 +1,121 @@
+
+<div class="row">
+    <div class="col-sm-8">
+        <form #f="ngForm" (ngSubmit)="previewRequest(f.value, content)">
+            <div class="container">
+                <h4 class="heading">提交新发送申请</h4>
+                <span class="text-primary">短信内容</span>
+            </div>
+            <div class="container form-group">
+                <div class="input-group">
+                    <textarea name="textContent" id="textContent" #inputContent [(ngModel)]="inputContent.value" required #textContent="ngModel" placeholder="请输入短信内容😊"></textarea>
+                </div>
+            </div>
+
+            <div class="container" id="imageUpload">
+                <input style="display: none" type="file" (change)="onSelectImageChanged($event)" #fileInput>
+                <button class="btn-primary" (click)="fileInput.click(); $event.preventDefault()">选择上传图片</button> 
+            
+                <span class="alert alert-light" role="alert">
+                    可选 .jpg/.jpeg/.png 文件
+                </span>
+            
+                <div id="selectedImage" class="col-sm-10" *ngIf="selectedImage">
+                    <span>已选图片： {{ selectedImage.name }}</span>
+                    <button type="button reset" class="close" (click)="resetImage()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <div class="alert alert-warning alert-sm" role="alert">
+                        ⚠️注意：图片将作为单独短信发送，收信人将看到上图下文两条短信，发送图片消耗额外1单位配额
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="container big-mar" >
+                <div class="text-primary">自定义号段（可选，自定义号段将作为系统默认号段的附加号段) </div>
+            
+                    <input style="display: none" type="file" (change)="onSelectNumberRangeChange($event)" #fileInput>
+                    <button class="btn-primary" (click)="fileInput.click()">选择自定义号段</button>
+                    
+                    <span class="alert alert-light" role="alert">
+                        可选 .txt/.csv/.xls 文件
+                    </span>
+                    
+                    <div id="selectedNumberRange" class="col-sm-10" *ngIf="selectedNumberRange">
+                        <span>已选号段文件： {{ selectedNumberRange.name }}</span>
+                        <button type="button" class="close" (click)="resetImage()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+            </div> -->
+            
+            <div class="container big-mar col-sm-10">
+                <div class="text-primary">发送数量 </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input required [min]="500" #volume="ngModel" name="volume" id="volume" type="number" class="form-control"
+                            [(ngModel)]="inputContent.sentVolume">
+                    </div>
+                    <div class="alert alert-danger" *ngIf="volume.touched && volume.invalid">
+                        请输入发送数量
+                    </div>
+                </div>
+                
+                <button type="submit" [disabled]="volume.invalid || textContent.invalid" class="btn btn-primary">提交审核</button>
+            </div>
+        </form>
+    </div>
+ </div>
+
+
+    <!-- <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
+        <input name="first" id="textContent" #second [(ngModel)]="second.value" required #first="ngModel">
+        <input name="last" ngModel>
+        <button>Submit</button>
+    </form>
+    
+    <p>First name value: {{ first.value }}</p>
+    <p>First name valid: {{ first.valid }}</p>
+    <p>Form value: {{ f.value | json }}</p>
+    <p>Form valid: {{ f.valid }}</p> -->
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title text-primary" id="modal-basic-title">短信申请详情</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <div class="row">
+                <form class="col-sm-6">
+                    <div class="form-group">
+                        <label class="text-primary">申请时间：</label>
+                        <a> {{request.createdAt}}</a>
+                        <p></p>
+                        <label class="text-primary" >短信内容：</label>
+                        <p style="white-space: pre-line"> {{request.textContent}} </p>
+                        <label class="text-primary">计价规则 （发送数量 * 单次条数）</label>
+                        <p> {{request.sentVolume}}次 * {{ request.creditCost / request.sentVolume }} 条/次</p>
+                        <label class="text-primary">配额消耗：</label>
+                        <p> {{request.creditCost}} </p>
+                        <label class="text-primary">申请状态：</label>
+                        <p>等待提交</p>
+                    </div>
+                </form>
+                <div class="col-sm-6">
+                    <div *ngIf="selectedImage" class="image-preview">
+                        <label class="text-primary">待发送图片：</label>
+                        <div class="card" style="width: 18rem;">
+                            <img [src]="imagePreviewUrl" *ngIf="selectedImage" class="card-img-top">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary nav-link" (click)="submitRequest(); modal.close('Save click')" routerLink="/request-history">确认提交</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">取消</button>
+    </div>
+</ng-template>

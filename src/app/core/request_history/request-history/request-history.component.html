@@ -1,0 +1,67 @@
+<div class="container">
+    <h4 class="heading">发送状态</h4>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link" id="pending" data-toggle="tab" [routerLink]="['/request-history/', {outlets: {'request-list': ['pending']}}]" role="tab" aria-controls="home"
+                aria-selected="true">待审核</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="rejected" data-toggle="tab" [routerLink]="['/request-history/', {outlets: {'request-list': ['rejected']}}]" role="tab" aria-controls="profile"
+                aria-selected="false">未通过</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="approved" data-toggle="tab" [routerLink]="['/request-history/', {outlets: {'request-list': ['approved']}}]" role="tab" aria-controls="contact"
+                aria-selected="false">正在发送</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="completed" data-toggle="tab" [routerLink]="['/request-history/', {outlets: {'request-list': ['completed']}}]" role="tab"
+                aria-controls="contact" aria-selected="false">发送完成</a>
+        </li>
+    </ul>
+    <div class="content">
+        <div class="tab-content" id="myTabContent">
+            <router-outlet name="request-list"></router-outlet>
+        </div>
+    </div>
+</div>
+
+<!-- <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="pending-tab" data-toggle="tab" [routerLink]="['/request-history/', 'PENDING_REVIEW']" role="tab" aria-controls="pending"
+            aria-selected="true" (click)="notify()">待审核</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="rejected-tab" data-toggle="tab" [routerLink]="['/request-history/', 'REJECTED']" role="tab" aria-controls="rejected"
+            aria-selected="false" (click)="notify()">未通过</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="approved-tab" data-toggle="tab" [routerLink]="['/request-history/', 'APPROVED']" role="tab" aria-controls="approved"
+            aria-selected="false">正在发送</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="completed-tab" data-toggle="tab" [routerLink]="['/request-history/', 'COMPLETED']" role="tab" aria-controls="completed"
+            aria-selected="false">发送完成</a>
+    </li>
+</ul>
+
+<div class="col container-fluid flex-fill">
+
+        <router-outlet></router-outlet>
+
+</div> -->
+    <!-- <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+            <eric-data-table></eric-data-table>
+        </div>
+        <div class="tab-pane fade" id="rejected" role="tabpanel" aria-labelledby="rejected-tab">...</div>
+        <div class="tab-pane fade" id="approved" role="tabpanel" aria-labelledby="approved-tab">...</div>
+        <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">...</div>
+    </div>
+    <mat-tab-group animationDuration="1000ms">
+    <mat-tab label="待审核">
+        <eric-data-table></eric-data-table>
+    </mat-tab>
+    <mat-tab label="未通过">Content 2</mat-tab>
+    <mat-tab label="正在发送">Content 3</mat-tab>
+    <mat-tab label="发送完成">Content 4</mat-tab>
+</mat-tab-group> -->

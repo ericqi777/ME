@@ -1,0 +1,19 @@
+.table-wrap {
+  height: 60%;
+  overflow-y: auto;
+}
+
+.table-wrap thead th { 
+    position: sticky; top: 0; 
+    background-color: #293462;
+    color: #faf9f9;
+}
+
+.modal-title {
+    margin-left: 5%;
+    margin-top: 5%;
+}
+
+.modal-body {
+    margin-left: 5%;
+}

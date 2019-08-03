@@ -1,0 +1,35 @@
+﻿
+
+<div class="container">
+    <div class="row">
+
+        <div class="col-sm-4 login"></div>
+        <div style="margin-top: 200px" class="col-sm-4">
+            <h2 style="text-align: center">M.E.信息系统</h2>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" formControlName="username" class="form-control"
+                        [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
+                    <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+                        <div *ngIf="f.username.errors.required">请输入邮箱</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" formControlName="password" class="form-control"
+                        [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+                    <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                        <div *ngIf="f.password.errors.required">请输入密码</div>
+                    </div>
+                </div>
+                <div class="form-group text-center">
+                    <button  style="width: 50%" [disabled]="loading" class="btn btn-primary btn-lg">
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                        登陆
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
