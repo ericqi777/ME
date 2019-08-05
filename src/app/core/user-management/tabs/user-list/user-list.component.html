@@ -1,0 +1,106 @@
+<form>
+    <div class="form-group form-inline">
+        搜索用户: <input class="form-control ml-2" type="text" #search (keyup)="filterList(search.value)"/>
+        <span class="ml-3" *ngIf="service.loading$ | async">正在加载...</span>
+    </div>
+
+    <div class="table-wrap">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col" sortable="userName" (sort)="onSort($event)">用户名</th>
+                    <th scope="col" sortable="createdTime" (sort)="onSort($event)">创建时间</th>
+                    <th scope="col" sortable="credit" (sort)="onSort($event)">现有配额</th>
+                    <th scope="col" sortable="role" (sort)="onSort($event)">权限</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let appUser of filteredUserList?.slice().reverse()">
+                    <td>
+                        <ngb-highlight [result]="appUser.user.userName" [term]="service.searchTerm"></ngb-highlight>
+                    </td>
+                    <td>
+                        <ngb-highlight [result]="appUser.user.createdTime" [term]="service.searchTerm"></ngb-highlight>
+                    </td>
+                    <td>
+                        <ngb-highlight [result]="appUser.user.credit" [term]="service.searchTerm"></ngb-highlight>
+                    </td>
+                    <td>
+                        <ngb-highlight [result]="getRole(appUser.user)" [term]="service.searchTerm"></ngb-highlight>
+                    </td>
+                    <td>
+                        <button class="btn btn-success" style="margin-right: 2px" (click)="previewAddCredit(addCreditModal, appUser)">增加配额</button>
+                        <button class="btn btn-warning" style="margin-left: 2px" (click)="previewSubtractCredit(subtractCreditModal, appUser)">回收配额</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between p-2">
+        <ngb-pagination [collectionSize]="userList.length" [(page)]="service.page" [pageSize]="service.pageSize">
+        </ngb-pagination>
+
+        <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
+            <option [ngValue]="10">每页10条</option>
+            <option [ngValue]="20">每页20条</option>
+            <option [ngValue]="30">每页30条</option>
+        </select>
+    </div>
+
+</form>
+
+<ng-template #addCreditModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title text-primary" id="modal-basic-title">增加配额</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <input type="number" [max]="curCredit$" [min]="0" [(ngModel)]="inputCredit" #creditCost
+                class="form-control" name="creditCost" #add>
+            <div class="alert alert-danger" *ngIf="inputCredit > curCredit$">
+                您的现有配额不足 可分配上限为: {{curCredit$}}
+            </div>
+            <div class="alert alert-warning" *ngIf="curCredit$ >= inputCredit">
+                <p>分配后 您剩余的配额为：{{curCredit$ - inputCredit}}</p>
+                <p>分配后 {{ targetUser.user.userName }} 的剩余配额为：{{targetUser.user.credit + inputCredit}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="addCredit(); modal.close('Save click')" 
+            [disabled]="inputCredit > curCredit$ || !inputCredit || inputCredit === 0" routerLink="/user-management">确认增加</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">返回</button>
+    </div>
+</ng-template>
+
+<ng-template #subtractCreditModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title text-primary" id="modal-basic-title">回收配额</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <input type="number" [max]="curCredit$" [min]="0" [(ngModel)]="inputCredit" #creditCost class="form-control"
+                name="creditCost">
+            <div class="alert alert-danger" *ngIf="inputCredit > targetUser.user.credit">
+                {{ targetUser.user.userName }}的现有配额不足 可回收上限为: {{targetUser.user.credit}}
+            </div>
+            <div class="alert alert-warning" *ngIf="targetUser.user.credit >= inputCredit && inputCredit > 0">
+                分配后 您剩余的配额为：{{curCredit$ + inputCredit}}
+                <p>回收后 {{ targetUser.user.userName }} 的剩余配额为：{{targetUser.user.credit - inputCredit}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="substractCredit(); modal.close('Save click')"
+            [disabled]="inputCredit > targetUser.user.credit || !inputCredit || inputCredit === 0" routerLink="/user-management">确认回收</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">返回</button>
+    </div>
+</ng-template>

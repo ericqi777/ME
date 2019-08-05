@@ -24,6 +24,19 @@ export class UserService {
     });
   }
 
+  create(newUser: AppUser, newId: string) {
+    console.log('/users/' + newId, newUser);
+    
+    this.db.object('/users/' + newId).set(newUser);
+  }
+
+  updateCredit(uid, newCredit) {
+    console.log(uid);
+    console.log(newCredit);
+    
+    this.db.object('/users/' + uid).update({credit: newCredit});
+  }
+
   get(uid: string): AngularFireObject<AppUser> {
     return this.db.object('/users/' + uid);
   }
@@ -36,5 +49,23 @@ export class UserService {
     console.log(result_list);
     
     return result_list;
+  }
+
+  getAllUsers(): AngularFireList<AppUser> {
+    return this.db.list('/users/', ref => ref.orderByChild('createdTime'));
+  }
+
+  deleteUser(uid: string) {
+    return this.db.object('/users/' + uid).remove();
+  }
+
+  getRole(user: AppUser): string {
+    if (user.isAdmin) {
+      return "管理员";
+    } else if (user.isPowerUser) {
+      return "高级工号";
+    } else {
+      return "普通工号"
+    }
   }
 }

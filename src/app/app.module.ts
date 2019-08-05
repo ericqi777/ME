@@ -37,8 +37,9 @@ import { RejectedComponent } from './core/request_history/tabs/rejected/rejected
 import { ApprovedComponent } from './core/request_history/tabs/approved/approved.component';
 import { CompletedComponent } from './core/request_history/tabs/completed/completed.component';
 import { RequestTableService } from './core/request_history/tabs/request-table.service';
-import { UserCreateComponent } from './core/user-management/user-create/user-create.component';
-import { UserListComponent } from './core/user-management/user-list/user-list.component';
+import { UserCreateComponent } from './core/user-management/tabs/user-create/user-create.component';
+import { UserListComponent } from './core/user-management/tabs/user-list/user-list.component';
+import { UserManagermentComponent } from './core/user-management/user-managerment/user-managerment.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -66,7 +67,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     CompletedComponent,
     NgbdSortableHeader,
     UserCreateComponent,
-    UserListComponent
+    UserListComponent,
+    UserManagermentComponent
   ],
   imports: [
     BrowserModule,
@@ -96,7 +98,15 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
       { path: 'request-edit', component: MessageEditorComponent },  
       { path: 'user-management/manage', component: UserListComponent },   
       { path: 'user-management/create', component: UserCreateComponent },  
-      { path: 'user-management', component: UserListComponent },  
+      { 
+        path: 'user-management', 
+        component: UserManagermentComponent,
+        children: [
+          { path: '', outlet: 'user-management', component: UserListComponent },
+          { path: 'manage', outlet: 'user-management', component: UserListComponent },
+          { path: 'create', outlet: 'user-management', component: UserCreateComponent },
+        ]
+      },  
     ]),
     MatTableModule,
     MatPaginatorModule,

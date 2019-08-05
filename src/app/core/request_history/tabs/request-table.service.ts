@@ -118,23 +118,16 @@ export class RequestTableService {
 
   private _search(): Observable<SearchResult> {
     const { sortColumn, sortDirection, pageSize, page, searchTerm } = this._state;
-
-    console.log("2.1 searching " + this._state);
     
     // 1. sort
     let requests = sort(this.requestList, sortColumn, sortDirection);
-
-    console.log("2.2 after sorting " + requests);
 
     // 2. filter
     requests = requests.filter(request => matches(request, searchTerm, this.pipe));
     const total = requests.length;
 
-    console.log("2.2 after filtering " + requests);
-
     // 3. paginate
     requests = requests.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize);
-    console.log("2.3. after formatting the requests are: " + requests);
     
     return of({ requests, total });
   }

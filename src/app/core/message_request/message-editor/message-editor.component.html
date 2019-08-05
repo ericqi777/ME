@@ -30,23 +30,6 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="container big-mar" >
-                <div class="text-primary">自定义号段（可选，自定义号段将作为系统默认号段的附加号段) </div>
-            
-                    <input style="display: none" type="file" (change)="onSelectNumberRangeChange($event)" #fileInput>
-                    <button class="btn-primary" (click)="fileInput.click()">选择自定义号段</button>
-                    
-                    <span class="alert alert-light" role="alert">
-                        可选 .txt/.csv/.xls 文件
-                    </span>
-                    
-                    <div id="selectedNumberRange" class="col-sm-10" *ngIf="selectedNumberRange">
-                        <span>已选号段文件： {{ selectedNumberRange.name }}</span>
-                        <button type="button" class="close" (click)="resetImage()" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-            </div> -->
             
             <div class="container big-mar col-sm-10">
                 <div class="text-primary">发送数量 </div>
@@ -65,18 +48,6 @@
         </form>
     </div>
  </div>
-
-
-    <!-- <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
-        <input name="first" id="textContent" #second [(ngModel)]="second.value" required #first="ngModel">
-        <input name="last" ngModel>
-        <button>Submit</button>
-    </form>
-    
-    <p>First name value: {{ first.value }}</p>
-    <p>First name valid: {{ first.valid }}</p>
-    <p>Form value: {{ f.value | json }}</p>
-    <p>Form valid: {{ f.valid }}</p> -->
 
 <ng-template #content let-modal>
     <div class="modal-header">

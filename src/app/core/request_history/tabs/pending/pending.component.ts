@@ -25,8 +25,9 @@ export class PendingComponent {
   constructor(public service: RequestTableService, private modalService: NgbModal) {
     this.requests$ = service.requests$;
     this.requests$ = this.requests$.pipe(map(requestList => {
+      console.log("return size is: " + requestList.length);
       requestList = requestList.filter(request => request.requestStatus == RequestStatus.PENDING_REVIEW);
-      return requestList;
+      return requestList.sort((a, b) => compare(a.createdAt, b.createdAt));
     }));
     this.total$ = service.total$;
   }
@@ -51,5 +52,8 @@ export class PendingComponent {
       ariaLabelledBy: 'modal-basic-title'
     });
   }
+}
 
+function compare(v1, v2) {
+  return v1 < v2 ? -1 : v1 > v2 ? 1 : 0;
 }

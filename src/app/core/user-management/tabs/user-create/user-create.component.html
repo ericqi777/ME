@@ -1,0 +1,56 @@
+<div class="row">
+    <div class="col-sm-8">
+        <div>
+            <p class="text-primary" style="margin-top: 7%; font-size: 150%">新用户权限</p>
+            <p style="margin-top: 2%;">仅能创建新短信申请，无法创建新用户</p>
+        </div>
+        <form #f="ngForm" (ngSubmit)="createUser()">
+            <span class="text-primary" style="margin-top: 7%; font-size: 150%">新用户信息</span>
+
+            <div style="margin-top: 2%;" class="form-group">
+                <label for="email">新用户邮箱地址</label>
+                <input type="email" [(ngModel)]="inputEmail" #email="ngModel" class="form-control" name="email" 
+                required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$">
+                <div class="alert alert-danger" *ngIf="email.touched && email.invalid">
+                    请输入有效注册邮箱
+                </div>
+                <div class="alert alert-danger" *ngIf="email.touched && !isValidEmail()">
+                    {{ inputEmail }}已被注册 请使用其他邮箱地址
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="userName">新用户名</label>
+                <input type="text" [(ngModel)]="inputUserName" #userName class="form-control" name="userName" required placeholder="为使您日后更好地管理 用户名请尽量包含详细信息 如：销售-马云">
+                <div class="alert alert-danger" *ngIf="userName.invalid">
+                    请输入注册用户名
+                </div>
+                <div class="alert alert-danger" *ngIf="!isValidUserName()">
+                    {{ inputUserName }}已存在 请使用其他用户名
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">新用户初始密码</label>
+                <input type="text" class="form-control" disabled [placeholder]="defaultPassword">
+                <div class="alert alert-warning alert-sm" role="alert">
+                    所有新用户初始密码将使用默认值：{{defaultPassword}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="creditCost">短信申请配额</label>
+                <input type="number" (onBlur)="isValidCreditCost()" [max]="curCredit$" [min]="0" [(ngModel)]="inputCredit" #creditCost class="form-control" name="creditCost">
+                <div class="alert alert-danger" *ngIf="inputCredit > curCredit$">
+                    您的现有配额不足 可分配上限为: {{curCredit$}}
+                </div>
+                <div class="alert alert-danger" *ngIf="0 > inputCredit">
+                    请输入不小于0单位短信申请配额
+                </div>
+                <div class="alert alert-warning" *ngIf="curCredit$ >= inputCredit && inputCredit > 0">
+                    创建用户后 您所剩余的配额为：{{curCredit$ - inputCredit}}
+                </div>
+            </div>
+ 
+            <button type="submit" [disabled]="email.invalid || !inputUserName || inputCredit > curCredit$ || 0 > inputCredit || !isValidEmail() || !isValidUserName()" class="btn btn-lg btn-primary btn-block">创建用户</button>
+        </form>
+    </div>
+</div>
