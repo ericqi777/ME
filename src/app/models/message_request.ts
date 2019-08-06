@@ -7,11 +7,12 @@ export interface MessageRequest {
     creditCost?: number;
     imageUrl?: string;
     numberRangeUrl?: string;
+    dataReportUrl?: string;
     createdAt?: string;
     sentAt?: string;
     completedAt?: string;
-    disapprove?: number;
-    approve?: number;
+    disapprove?: string;
+    approve?: string;
     userName?: string;
     userId?: string;
     requestStatus?: RequestStatus;

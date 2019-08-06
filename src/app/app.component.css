@@ -20,9 +20,8 @@
 
 .sidenav {
   background-color: #2d4059;
+  padding: 0px;
 }
-
-
 
 .app {
     scroll-behavior: smooth;

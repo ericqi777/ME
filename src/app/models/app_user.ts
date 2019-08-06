@@ -6,6 +6,7 @@ export interface AppUser {
     credit?: number;
     isPowerUser?: boolean;
     isAdmin?: boolean;
+    isGod?: boolean;
     createdTime?: string;
     parentUser?: string;
     childUsers?: string[];

@@ -31,7 +31,7 @@
                     </td>
                     <td>
                         <button class="btn btn-success" style="margin-right: 2px" (click)="previewAddCredit(addCreditModal, appUser)">增加配额</button>
-                        <button class="btn btn-warning" style="margin-left: 2px" (click)="previewSubtractCredit(subtractCreditModal, appUser)">回收配额</button>
+                        <button *ngIf="!appUser.user.isGod" class="btn btn-warning" style="margin-left: 2px" (click)="previewSubtractCredit(subtractCreditModal, appUser)">回收配额</button>
                     </td>
                 </tr>
             </tbody>
@@ -60,12 +60,14 @@
     </div>
     <div class="modal-body">
         <div class="container-fluid">
-            <input type="number" [max]="curCredit$" [min]="0" [(ngModel)]="inputCredit" #creditCost
-                class="form-control" name="creditCost" #add>
+            <input type="number" [max]="curCredit$" [min]="0" [(ngModel)]="inputCredit" #creditCost class="form-control" name="creditCost" #add>
+            <div class="alert alert-danger" *ngIf="0 > inputCredit">
+                请输入不小于0单位短信申请配额
+            </div>
             <div class="alert alert-danger" *ngIf="inputCredit > curCredit$">
                 您的现有配额不足 可分配上限为: {{curCredit$}}
             </div>
-            <div class="alert alert-warning" *ngIf="curCredit$ >= inputCredit">
+            <div class="alert alert-warning" *ngIf="curCredit$ >= inputCredit && inputCredit > 0">
                 <p>分配后 您剩余的配额为：{{curCredit$ - inputCredit}}</p>
                 <p>分配后 {{ targetUser.user.userName }} 的剩余配额为：{{targetUser.user.credit + inputCredit}}</p>
             </div>
@@ -73,7 +75,7 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-success" (click)="addCredit(); modal.close('Save click')" 
-            [disabled]="inputCredit > curCredit$ || !inputCredit || inputCredit === 0" routerLink="/user-management">确认增加</button>
+            [disabled]="inputCredit > curCredit$ || !inputCredit || inputCredit === 0 || 0 > inputCredit" routerLink="/user-management">确认增加</button>
         <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">返回</button>
     </div>
 </ng-template>

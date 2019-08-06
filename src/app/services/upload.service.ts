@@ -33,4 +33,14 @@ export class UploadService {
       }
     )
   }
+
+  uploadFile(file: File, subPath: string): firebase.storage.UploadTask{
+
+    const metaData = {'contentType': file.type};
+    const storageRef: firebase.storage.Reference = firebase.storage().ref();
+    const uploadTask: firebase.storage.UploadTask = storageRef.child(`${subPath}/${file.name}`).put(file, metaData);
+    console.log("Uploading: ", file.name, "....")
+
+    return uploadTask;
+  }
 }

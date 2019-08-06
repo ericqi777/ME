@@ -38,7 +38,7 @@
             </div>
             <div class="form-group">
                 <label for="creditCost">短信申请配额</label>
-                <input type="number" (onBlur)="isValidCreditCost()" [max]="curCredit$" [min]="0" [(ngModel)]="inputCredit" #creditCost class="form-control" name="creditCost">
+                <input type="number" [max]="curCredit$" [min]="0" [(ngModel)]="inputCredit" #creditCost class="form-control" name="creditCost">
                 <div class="alert alert-danger" *ngIf="inputCredit > curCredit$">
                     您的现有配额不足 可分配上限为: {{curCredit$}}
                 </div>

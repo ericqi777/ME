@@ -7,13 +7,12 @@ import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 })
 export class MessageRequestService {
 
-  resultMap: Map<RequestStatus, MessageRequest[]> = new Map;
+  resultMap: Map<RequestStatus, {mid: string, messageRequest: MessageRequest}[]> = new Map;
 
   constructor(private db: AngularFireDatabase) { }
 
   create(messageRequest: MessageRequest) {
     let uid = messageRequest.userId;
-    this.db.list('/messageRequests/' + uid + '/').push(messageRequest);
     this.db.list('/rawMessageRequests/').push(messageRequest);
   }
 
@@ -46,16 +45,45 @@ export class MessageRequestService {
 
   getSpecifiedStatusMessageRequests(requeststatus: RequestStatus, currentUid: string) {
     
-    this.getAllReuqestsForSingleUser(currentUid).valueChanges()
+    this.getAllReuqestsForSingleUser(currentUid).snapshotChanges()
       .subscribe(requestList => {
         requestList.map(request => {
-          if (this.resultMap.has(request.requestStatus)) {
-            this.resultMap.get(request.requestStatus).push(request);
+          let requestState = request.payload.val().requestStatus;
+          let childRequest = {
+            mid : request.payload.key,
+            messageRequest: request.payload.val()
+          }
+          if (this.resultMap.has(requestState)) {
+            this.resultMap.get(requestState).push(childRequest);
           } else {
-            this.resultMap.set(request.requestStatus, [request])
+            this.resultMap.set(requestState, [childRequest])
           }
           console.log("result map is ready" + this.resultMap);
         })
       })
+  }
+
+  updateRequestStatus(mid, newStatus) {
+    console.log(mid);
+    
+    console.log(newStatus);
+
+    this.db.object('/rawMessageRequests/' + mid).update({ requestStatus: newStatus });
+  }
+
+  updateDataReportUrl(mid, reportUrl) {
+    console.log(mid);
+    
+    console.log(reportUrl);
+
+    this.db.object('/rawMessageRequests/' + mid).update({ dataReportUrl: reportUrl });
+  }
+
+  updateApprovalStatue(mid, actor, approve: boolean) {
+    if(approve) {
+      this.db.object('/rawMessageRequests/' + mid).update({ approve: actor });
+    } else {
+      this.db.object('/rawMessageRequests/' + mid).update({ disapprove: actor });
+    }
   }
 }

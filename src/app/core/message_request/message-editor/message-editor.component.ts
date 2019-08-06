@@ -87,8 +87,8 @@ export class MessageEditorComponent implements OnInit {
     this.request.sentVolume = input.volume;
     this.request.textContent = input.textContent;
     this.request.creditCost = cost;
-    this.request.approve = 0;
-    this.request.disapprove = 0;
+    this.request.approve = "";
+    this.request.disapprove = "";
     this.request.createdAt = this.dateService.getChinaTime();
     if (this.selectedImage) {
       this.request.imageUrl = this.imageBasePath + "/" + this.request.userId + "/" + this.selectedImage.name;

@@ -10,7 +10,7 @@ import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SortDirection } from './sortable.directive';
 
 interface SearchResult {
-  requests: MessageRequest[];
+  requests: { mid: string, messageRequest: MessageRequest }[];
   total: number;
 }
 
@@ -26,7 +26,7 @@ function compare(v1, v2) {
   return v1 < v2 ? -1 : v1 > v2 ? 1 : 0;
 }
 
-function sort(requests: MessageRequest[], column: string, direction: string): MessageRequest[] {
+function sort(requests: {mid: string, messageRequest: MessageRequest}[], column: string, direction: string) {
   if (direction === '') {
     return requests;
   } else {
@@ -37,16 +37,16 @@ function sort(requests: MessageRequest[], column: string, direction: string): Me
   }
 }
 
-function matches(request: MessageRequest, term: string, pipe: PipeTransform) {
+function matches(request: { mid: string, messageRequest: MessageRequest }, term: string, pipe: PipeTransform) {
   if (!request) {
     return false;
   } else {
     console.log("here is the request " + request);
     
-    return request.createdAt.toLowerCase().includes(term.toLowerCase())
-      || request.textContent.valueOf().toLowerCase().includes(term.toLowerCase())
-      || request.requestStatus.toLowerCase().includes(term.toLowerCase())
-      || pipe.transform(request.creditCost).includes(term);
+    return request.messageRequest.createdAt.toLowerCase().includes(term.toLowerCase())
+      || request.messageRequest.textContent.valueOf().toLowerCase().includes(term.toLowerCase())
+      || request.messageRequest.requestStatus.toLowerCase().includes(term.toLowerCase())
+      || pipe.transform(request.messageRequest.creditCost).includes(term);
 
   }
 }
@@ -56,9 +56,9 @@ export class RequestTableService {
 
   private _loading$ = new BehaviorSubject<boolean>(true);
   private _search$ = new Subject<void>();
-  private _requests$ = new BehaviorSubject<MessageRequest[]>([]);
+  private _requests$ = new BehaviorSubject<{ mid: string, messageRequest: MessageRequest }[]>([]);
   private _total$ = new BehaviorSubject<number>(0);
-  private requestList: MessageRequest[] = [];
+  private requestList: {mid: string, messageRequest: MessageRequest}[] = [];
 
   private _state: State = {
     page: 1,
@@ -70,18 +70,24 @@ export class RequestTableService {
 
   constructor(private pipe: DecimalPipe, private messageRequestService: MessageRequestService, private auth: AuthService) {
     
+    let curAppUserId = this.auth.getCurrentUser().uid;
     auth.appUser$.subscribe(curUser => {
-      if (!curUser.isAdmin) {
-        messageRequestService.getAllReuqestsForSingleUser(auth.getCurrentUser().uid).valueChanges()
-          .subscribe(requestList => {
-            this.requestList = requestList
-          });
-      } else {
-        messageRequestService.getAllReuqests().valueChanges()
-          .subscribe(requestList => {
-            this.requestList = requestList
-          });
-      }
+      messageRequestService.getAllReuqests().snapshotChanges()
+        .subscribe(requestList => {
+          requestList.map(request => {
+            let childRequest = {
+              mid: request.payload.key,
+              messageRequest: request.payload.val()
+            }
+            if (!curUser.isAdmin) {
+              if (childRequest.mid == curAppUserId) {
+                this.requestList.push(childRequest);
+              }
+            } else {
+              this.requestList.push(childRequest);
+            }
+          })
+        })
       this._search$.pipe(
         tap(() => this._loading$.next(true)),
         debounceTime(200),

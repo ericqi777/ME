@@ -6,6 +6,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { NgbdSortableHeader, SortEvent } from 'src/app/core/request_history/tabs/sortable.directive';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserTableService } from './user_table_service/user-table.service';
+import { Router } from '@angular/router';
+import { IfStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-user-list',
@@ -33,6 +35,7 @@ export class UserListComponent implements OnInit {
     private auth: AuthService, 
     public service: UserTableService, 
     private modalService: NgbModal,
+    private router: Router
     ) {
     auth.appUser$.subscribe(appUser => {
       this.curAppUser = appUser;
@@ -44,8 +47,12 @@ export class UserListComponent implements OnInit {
             user: child.payload.val()
           };
 
-          if (this.curAppUser.isAdmin) {
+          if (this.curAppUser.isGod) {
             this.userList.push(childUser);
+          } else if (this.curAppUser.isAdmin) {
+            if (!childUser.user.isGod) {
+              this.userList.push(childUser);
+            }
           } else if (this.curAppUser.isPowerUser) {
             childUser.user.parentUser == this.curUserId ? this.userList.push(childUser) : this.userList;
           }
@@ -67,6 +74,9 @@ export class UserListComponent implements OnInit {
 
     this.userService.updateCredit(this.targetUser.uid, this.targetUser.user.credit + this.inputCredit)
     this.userService.updateCredit(this.curUserId, this.curCredit$ - this.inputCredit);
+
+    this.router.navigate(['/user-management/', { outlets: { 'user-management': ['create'] } }]);
+    this.router.navigate(['/user-management']);
   }
 
   substractCredit() {
@@ -78,6 +88,9 @@ export class UserListComponent implements OnInit {
     this.userService.updateCredit(this.targetUser.uid, this.targetUser.user.credit - this.inputCredit)
     //Add current user credot
     this.userService.updateCredit(this.curUserId, this.curCredit$ + this.inputCredit);
+
+    this.router.navigate(['/user-management/', { outlets: { 'user-management': ['create'] } }]);
+    this.router.navigate(['/user-management']);
   }
 
   getRole(user: AppUser): string {
@@ -98,11 +111,11 @@ export class UserListComponent implements OnInit {
 
   filterList(query: string) {
     this.filteredUserList = this.userList.filter(appUser => {
-      return appUser.user.userName.toLowerCase().includes(query) ||
-        appUser.user.email.toLowerCase().includes(query) ||
-        appUser.user.email.toLowerCase().includes(query) ||
-        appUser.user.createdTime.toLowerCase().includes(query) ||
-        this.userService.getRole(appUser.user).toLowerCase().includes(query);
+      return appUser.user.userName.toLowerCase().includes(query.toLowerCase()) ||
+        appUser.user.email.toLowerCase().includes(query.toLowerCase()) ||
+        appUser.user.email.toLowerCase().includes(query.toLowerCase()) ||
+        appUser.user.createdTime.toLowerCase().includes(query.toLowerCase()) ||
+        this.userService.getRole(appUser.user).toLowerCase().includes(query.toLowerCase());
     })
   }
 

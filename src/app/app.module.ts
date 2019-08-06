@@ -40,6 +40,7 @@ import { RequestTableService } from './core/request_history/tabs/request-table.s
 import { UserCreateComponent } from './core/user-management/tabs/user-create/user-create.component';
 import { UserListComponent } from './core/user-management/tabs/user-list/user-list.component';
 import { UserManagermentComponent } from './core/user-management/user-managerment/user-managerment.component';
+import { ProfileComponent } from './core/home/profile/profile.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -68,7 +69,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     NgbdSortableHeader,
     UserCreateComponent,
     UserListComponent,
-    UserManagermentComponent
+    UserManagermentComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,

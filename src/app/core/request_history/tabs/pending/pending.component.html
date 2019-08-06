@@ -18,19 +18,19 @@
             <tbody>
                 <tr *ngFor="let request of ( requests$ | async )?.slice().reverse()">
                     <td>
-                        <ngb-highlight [result]="request.createdAt" [term]="service.searchTerm"></ngb-highlight>
+                        <ngb-highlight [result]="request.messageRequest.createdAt" [term]="service.searchTerm"></ngb-highlight>
                     </td>
                     <td>
                         <ngb-highlight
-                            [result]="request.textContent.length > 40 ? request.textContent.substring(0,38) + '...' : request.textContent"
+                            [result]="request.messageRequest.textContent.length > 40 ? request.messageRequest.textContent.substring(0,38) + '...' : request.messageRequest.textContent"
                             [term]="service.searchTerm"></ngb-highlight>
                     </td>
                     <td>
-                        <ngb-highlight [result]="request.creditCost | number" [term]="service.searchTerm">
+                        <ngb-highlight [result]="request.messageRequest.creditCost | number" [term]="service.searchTerm">
                         </ngb-highlight>
                     </td>
                     <td>
-                        <ngb-highlight [result]="request.requestStatus" [term]="service.searchTerm"></ngb-highlight>
+                        <ngb-highlight [result]="request.messageRequest.requestStatus" [term]="service.searchTerm"></ngb-highlight>
                     </td>
                     <td>
                         <button class="btn btn-secondary btn-sm" style="margin-right: 1px"
@@ -92,6 +92,8 @@
         </div>
     </div>
     <div class="modal-footer">
+        <button [disabled]="!canApprove()" type="button" class="btn btn-success" (click)="approveRequest(); modal.close('Save click')">通过申请</button>
+        <button [disabled]="!canApprove()" type="button" class="btn btn-danger" (click)="dropRequest(); modal.close('Save click')">拒绝申请</button>
         <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">返回</button>
     </div>
 </ng-template>

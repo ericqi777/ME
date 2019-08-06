@@ -16,7 +16,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 export class RejectedComponent {
 
   previewRequest: MessageRequest = {};
-  requests$: Observable<MessageRequest[]>;
+  requests$: Observable<{ mid: string, messageRequest: MessageRequest }[]>;
   total$: Observable<number>;
 
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
@@ -24,7 +24,7 @@ export class RejectedComponent {
   constructor(public service: RequestTableService, private modalService: NgbModal) {
     this.requests$ = service.requests$;
     this.requests$ = this.requests$.pipe(map(requestList => {
-      requestList = requestList.filter(request => request.requestStatus == RequestStatus.REJECTED);
+      requestList = requestList.filter(request => request.messageRequest.requestStatus == RequestStatus.REJECTED);
       return requestList;
     }));
     this.total$ = service.total$;
@@ -42,8 +42,8 @@ export class RejectedComponent {
     this.service.sortDirection = direction;
   }
 
-  viewDetail(content, request) {
-    this.previewRequest = request;
+  viewDetail(content, request: { mid: string, messageRequest: MessageRequest }) {
+    this.previewRequest = request.messageRequest;
     this.modalService.open(content, {
       size: 'lg',
       scrollable: true,

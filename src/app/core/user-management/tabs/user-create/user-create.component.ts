@@ -21,7 +21,7 @@ export class UserCreateComponent implements OnInit {
   inputUserName;
   inputCredit: number = 0;
   curCredit$: number = 0;
-  defaultPassword: string = "336688";
+  defaultPassword: string = "159357";
   newAppUser: AppUser = {};
   curAppUser: AppUser;
 

@@ -6,7 +6,7 @@
     <li class="nav-item">
         <a class="nav-link" routerLink="/request-history">发送状态</a>
     </li>
-    <li class="nav-item" *ngIf=" (curAppUser$ | async)?.isAdmin || (curAppUser | async)?.isPowerUser ">
+    <li class="nav-item" *ngIf=" (curAppUser$ | async)?.isAdmin || (curAppUser$ | async)?.isPowerUser ">
         <a class="nav-link" routerLink="/user-management">用户创建与管理</a>
     </li>
 </ul>

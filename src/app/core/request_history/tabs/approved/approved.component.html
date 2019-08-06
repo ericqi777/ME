@@ -20,21 +20,23 @@
             <tbody>
                 <tr *ngFor="let request of ( requests$ | async )?.slice().reverse()">
                     <td>
-                        <ngb-highlight [result]="request.createdAt" [term]="service.searchTerm"></ngb-highlight>
+                        <ngb-highlight [result]="request.messageRequest.createdAt" [term]="service.searchTerm"></ngb-highlight>
                     </td>
                     <td>
                         <ngb-highlight 
-                        [result]="request.textContent.length > 40 ? request.textContent.substring(0,38) + '...' : request.textContent" 
+                        [result]="request.messageRequest.textContent.length > 40 ? request.messageRequest.textContent.substring(0,38) + '...' : request.messageRequest.textContent" 
                         [term]="service.searchTerm"></ngb-highlight>
                     </td>
                     <td>
-                        <ngb-highlight [result]="request.creditCost | number" [term]="service.searchTerm"></ngb-highlight>
+                        <ngb-highlight [result]="request.messageRequest.creditCost | number" [term]="service.searchTerm"></ngb-highlight>
                     </td>
                     <td>
-                        <ngb-highlight [result]="request.requestStatus" [term]="service.searchTerm"></ngb-highlight>
+                        <ngb-highlight [result]="request.messageRequest.requestStatus" [term]="service.searchTerm"></ngb-highlight>
                     </td>
                     <td>
                         <button class="btn btn-secondary btn-sm" style="margin-right: 1px" (click)="viewDetail(content, request)">查看详情</button>
+                        <button *ngIf="(curAppUser$ | async)?.isGod " class="btn-primary btn-sm" style="margin-right: 2px" 
+                        (click)="openDataReportModal(uploadDataReportModal, request)">上传数据报告</button>
                     </td>
                 </tr>
             </tbody>
@@ -67,23 +69,23 @@
                 <form class="col-sm-6">
                     <div class="form-group">
                         <label class="text-primary">申请时间：</label>
-                        <a> {{previewRequest.createdAt}}</a>
+                        <a> {{selectedRequest.createdAt}}</a>
                         <p></p>
                         <label class="text-primary">短信内容：</label>
-                        <p style="white-space: pre-wrap"> {{previewRequest.textContent}} </p>
+                        <p style="white-space: pre-wrap"> {{selectedRequest.textContent}} </p>
                         <label class="text-primary">计价规则 （发送数量 * 单次条数）</label>
-                        <p> {{previewRequest.sentVolume}}次 * {{ previewRequest.creditCost / previewRequest.sentVolume }} 条/次</p>
+                        <p> {{selectedRequest.sentVolume}}次 * {{ selectedRequest.creditCost / selectedRequest.sentVolume }} 条/次</p>
                         <label class="text-primary">配额消耗：</label>
-                        <p> {{previewRequest.creditCost}} </p>
+                        <p> {{selectedRequest.creditCost}} </p>
                         <label class="text-primary">申请状态：</label>
                         <p>等待提交</p>
                     </div>
                 </form>
-                <div class="col-sm-6" *ngIf="previewRequest.imageUrl" >
+                <div class="col-sm-6" *ngIf="selectedRequest.imageUrl" >
                     <div class="image-preview">
                         <label class="text-primary">待发送图片：</label>
                         <div class="card" style="width: 18rem;">
-                            <img [src]="previewRequest.imageUrl" class="card-img-top">
+                            <img [src]="selectedRequest.imageUrl" class="card-img-top">
                         </div>
                     </div>
                 </div>
@@ -91,6 +93,28 @@
         </div>
     </div>
     <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">返回</button>
+    </div>
+</ng-template>
+
+<ng-template #uploadDataReportModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title text-primary" id="modal-basic-title">上传数据报告</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <button class="btn-primary btn-sm" (click)="uploadButton.click()">选择数据报告</button>
+            <input style="display: none" type="file" (change)="onSelectDataReportChanged($event)" #uploadButton>
+            <div id="selectedDataReport" class="col-sm-10" *ngIf="selectedDataReport">
+                <span>已选文件： {{ selectedDataReport.name }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" [disabled]="!selectedDataReport" (click)="uploadDataReport(); modal.close('Save click')">确认上传</button>
         <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">返回</button>
     </div>
 </ng-template>
