@@ -84,11 +84,21 @@
                         <p style="color: #2fb462">发送完成</p>
                     </div>
                 </form>
-                <div class="col-sm-6" *ngIf="previewRequest.imageUrl">
-                    <div class="image-preview">
-                        <label class="text-primary">待发送图片：</label>
-                        <div class="card" style="width: 18rem;">
-                            <img [src]="previewRequest.imageUrl" class="card-img-top">
+                <div class="col-sm-6">
+                    <div *ngIf="previewRequest.numberRangeUrl" class="number-range-preview">
+                        <label class="text-primary">自选号段</label>
+                        <a ng-href=request.dataReportUrl download="数据报告">
+                            <button class="btn btn-primary btn-sm" (click)="downloadReport(previewRequest.numberRangeUrl)">
+                                <i class="fa fa-download">数据报告预览</i>
+                            </button>
+                        </a>
+                    </div>
+                    <div *ngIf="previewRequest.imageUrl">
+                        <div class="image-preview">
+                            <label class="text-primary">待发送图片：</label>
+                            <div class="card" style="width: 18rem;">
+                                <img [src]="previewRequest.imageUrl" class="card-img-top">
+                            </div>
                         </div>
                     </div>
                 </div>

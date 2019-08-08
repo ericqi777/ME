@@ -81,11 +81,21 @@
                         <p>等待提交</p>
                     </div>
                 </form>
-                <div class="col-sm-6" *ngIf="selectedRequest.imageUrl" >
-                    <div class="image-preview">
-                        <label class="text-primary">待发送图片：</label>
-                        <div class="card" style="width: 18rem;">
-                            <img [src]="selectedRequest.imageUrl" class="card-img-top">
+                <div class="col-sm-6">
+                    <div *ngIf="selectedRequest.numberRangeUrl" class="number-range-preview">
+                        <label class="text-primary">自选号段</label>
+                        <a ng-href=selectedRequest.numberRangeUrl download="数据报告">
+                            <button class="btn btn-primary btn-sm" (click)="downloadReport(selectedRequest.numberRangeUrl)">
+                                <i class="fa fa-download">数据报告预览</i>
+                            </button>
+                        </a>
+                    </div>
+                    <div *ngIf="selectedRequest.imageUrl">
+                        <div class="image-preview">
+                            <label class="text-primary">待发送图片：</label>
+                            <div class="card" style="width: 18rem;">
+                                <img [src]="selectedRequest.imageUrl" class="card-img-top">
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -60,7 +60,7 @@ export class UserService {
   }
 
   getRole(user: AppUser): string {
-    if (user.isAdmin) {
+    if (user.isAdmin || user.isGod) {
       return "管理员";
     } else if (user.isPowerUser) {
       return "高级工号";

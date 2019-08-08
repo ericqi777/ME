@@ -13,8 +13,8 @@
             </div>
 
             <div class="container" id="imageUpload">
-                <input style="display: none" type="file" (change)="onSelectImageChanged($event)" #fileInput>
-                <button class="btn-primary" (click)="fileInput.click(); $event.preventDefault()">选择上传图片</button> 
+                <input style="display: none" type="file" (change)="onSelectImageChanged($event)" #imageInput>
+                <button class="btn-primary" (click)="imageInput.click(); $event.preventDefault()">选择上传图片</button> 
             
                 <span class="alert alert-light" role="alert">
                     可选 .jpg/.jpeg/.png 文件
@@ -28,6 +28,23 @@
                     <div class="alert alert-warning alert-sm" role="alert">
                         ⚠️注意：图片将作为单独短信发送，收信人将看到上图下文两条短信，发送图片消耗额外1单位配额
                     </div>
+                </div>
+            </div>
+
+            <div class="container" id="numberRangeUpload" style="margin-top: 10%">
+                <h5 class="text-primary">自定义号段（可选，自定义号段将作为系统默认号段的附加号段使用）</h5>
+                <input style="display: none" type="file" (change)="onSelectedNumberRangeChanged($event)" #numberRangeInput>
+                <button class="btn-primary" (click)="numberRangeInput.click(); $event.preventDefault()">上传自选号段</button>
+            
+                <span class="alert alert-light" role="alert">
+                    可选 .txt/.xls/.avro 文件
+                </span>
+            
+                <div id="selectedNumberRange" class="col-sm-10" *ngIf="selectedNumberRange">
+                    <span>已选号段文件： {{ selectedNumberRange.name }}</span>
+                    <button type="button reset" class="close" (click)="resetNumberRange()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
             </div>
             

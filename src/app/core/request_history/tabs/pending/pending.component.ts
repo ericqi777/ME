@@ -88,6 +88,12 @@ export class PendingComponent {
   canApprove() {
     return this.previewRequest.approve != this.uid;
   }
+
+  downloadReport(url) {
+    console.log(url);
+    window.open(url);
+
+  }
 }
 
 function compare(v1, v2) {

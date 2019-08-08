@@ -96,4 +96,11 @@ export class ApprovedComponent {
     this.service.pageSize = 11;
     this.router.navigate(['/request-history/', { outlets: { 'request-list': ['completed'] } }]);
   }
+
+
+  downloadReport(url) {
+    console.log(url);
+    window.open(url);
+
+  }
 }

@@ -80,11 +80,21 @@
                         <p>等待提交</p>
                     </div>
                 </form>
-                <div class="col-sm-6" *ngIf="previewRequest.imageUrl">
-                    <div class="image-preview">
-                        <label class="text-primary">待发送图片：</label>
-                        <div class="card" style="width: 18rem;">
-                            <img [src]="previewRequest.imageUrl" class="card-img-top">
+                <div class="col-sm-6">
+                    <div *ngIf="previewRequest.numberRangeUrl" class="number-range-preview">
+                        <label class="text-primary">自选号段</label>
+                        <a ng-href=request.dataReportUrl download="数据报告">
+                            <button class="btn btn-primary btn-sm" (click)="downloadReport(previewRequest.numberRangeUrl)">
+                                <i class="fa fa-download">数据报告预览</i>
+                            </button>
+                        </a>
+                    </div>
+                    <div *ngIf="previewRequest.imageUrl">
+                        <div class="image-preview">
+                            <label class="text-primary">待发送图片：</label>
+                            <div class="card" style="width: 18rem;">
+                                <img [src]="previewRequest.imageUrl" class="card-img-top">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -92,8 +102,8 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button [disabled]="!canApprove()" type="button" class="btn btn-success" (click)="approveRequest(); modal.close('Save click')">通过申请</button>
-        <button [disabled]="!canApprove()" type="button" class="btn btn-danger" (click)="dropRequest(); modal.close('Save click')">拒绝申请</button>
+        <button *ngIf="(curAppUser$ | async)?.isAdmin" [disabled]="!canApprove()" type="button" class="btn btn-success" (click)="approveRequest(); modal.close('Save click')">通过申请</button>
+        <button *ngIf="(curAppUser$ | async)?.isAdmin" [disabled]="!canApprove()" type="button" class="btn btn-danger" (click)="dropRequest(); modal.close('Save click')">拒绝申请</button>
         <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">返回</button>
     </div>
 </ng-template>

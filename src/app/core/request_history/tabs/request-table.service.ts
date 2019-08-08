@@ -73,21 +73,27 @@ export class RequestTableService {
     let curAppUserId = this.auth.getCurrentUser().uid;
     auth.appUser$.subscribe(curUser => {
       messageRequestService.getAllReuqests().snapshotChanges()
-        .subscribe(requestList => {
-          requestList.map(request => {
-            let childRequest = {
-              mid: request.payload.key,
-              messageRequest: request.payload.val()
-            }
-            if (!curUser.isAdmin) {
-              if (childRequest.mid == curAppUserId) {
-                this.requestList.push(childRequest);
-              }
-            } else {
+      .subscribe(requestList => {
+        this.requestList = [];
+        requestList.map(request => {
+          let childRequest = {
+            mid: request.payload.key,
+            messageRequest: request.payload.val()
+          }
+          if (!curUser.isAdmin) {
+            console.log("curID: ", curAppUserId);
+            console.log("childRequestId: ", childRequest.mid);
+            
+            if (childRequest.messageRequest.userId == curAppUserId) {
+              console.log("none admin should see some message");
               this.requestList.push(childRequest);
             }
-          })
-        })
+          } else {
+            this.requestList.push(childRequest);
+          }
+        });
+        this.requestList.sort((b, a) => compare(a.messageRequest.createdAt, b.messageRequest.createdAt));
+      })
       this._search$.pipe(
         tap(() => this._loading$.next(true)),
         debounceTime(200),

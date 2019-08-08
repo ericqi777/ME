@@ -51,4 +51,8 @@ export class RejectedComponent {
     });
   }
 
+  downloadReport(url) {
+    console.log(url);
+    window.open(url);
+  }
 }

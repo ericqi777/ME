@@ -1,3 +1,4 @@
+import { UserService } from './services/user.service';
 import { Component } from '@angular/core';
 import { AppUser } from './models/app_user';
 import { AuthService } from './services/auth.service';
@@ -12,12 +13,16 @@ export class AppComponent {
 
   appUser: AppUser;
 
-  constructor(private auth: AuthService) {
+  constructor(private auth: AuthService, private userService: UserService) {
     auth.appUser$.subscribe(appUser => this.appUser = appUser)
   }
 
   logout() {
     this.auth.logout();
     this.appUser = null;
+  }
+
+  getRole() {
+    return this.userService.getRole(this.appUser);
   }
 }

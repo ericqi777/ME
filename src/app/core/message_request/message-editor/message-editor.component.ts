@@ -1,3 +1,4 @@
+import { UserService } from 'src/app/services/user.service';
 import { delay } from 'rxjs/operators';
 import { RequestTableService } from './../../request_history/tabs/request-table.service';
 import { MessageRequestService } from './../../../services/message-request.service';
@@ -9,6 +10,7 @@ import { UploadService } from '../../../services/upload.service';
 import { Component, OnInit, Input } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
+import { AppUser } from 'src/app/models/app_user';
 
 declare var $: any; 
 
@@ -19,13 +21,17 @@ declare var $: any;
 })
 export class MessageEditorComponent implements OnInit {
   selectedImage?: File;
-  selectedNumberRange: File;
+  selectedNumberRange?: File;
   uploadService: UploadService;
   messageRequestService: MessageRequestService;
   request: MessageRequest;
-  imageBasePath: string = "/image";
+  imageBasePath: string = "/image/";
   imagePreviewUrl;
+  imageStoreUrl;
+  numberRangeBasePath: string = "/numberRange/";
+  numberRangeStoreUrl;
   dateService: DateService;
+  curAppUser: AppUser;
 
   constructor(
     private requestTableService: RequestTableService,
@@ -34,7 +40,9 @@ export class MessageEditorComponent implements OnInit {
     authService: AuthService, 
     messageRequestService: MessageRequestService,
     private modalService: NgbModal,
-    dateService: DateService
+    dateService: DateService,
+    private userService: UserService,
+    private auth: AuthService
     ) {
       this.dateService = dateService;
       this.uploadService = uploadService;
@@ -42,8 +50,9 @@ export class MessageEditorComponent implements OnInit {
       this.request = { 
         userId : authService.getCurrentUser().uid,
         requestStatus : RequestStatus.PENDING_REVIEW
+      }
+      this.auth.appUser$.subscribe(appUser => this.curAppUser = appUser);
     }
-  }
   
   ngOnInit() {
     $("#textContent").emojioneArea({  
@@ -52,20 +61,69 @@ export class MessageEditorComponent implements OnInit {
     });
   }
 
-  uploadFile(subPath: string) {
-    if (!this.selectedImage) return;
+  uploadFile(imageSubPath?: string, numberRangeSubPath?: string) {
+    if (!this.selectedImage && !this.selectedNumberRange) {
+      this.messageRequestService.create(this.request);
+      return;
+    } 
 
-    let imageFileUpload = new Upload(this.selectedImage);
-    this.uploadService.pushUpload(imageFileUpload, subPath);
-    return imageFileUpload;
+    if (this.selectedImage && this.selectedNumberRange) {
+      this.uploadService.uploadFile(this.selectedImage, imageSubPath)
+        .then((uploadImgSnapshot: firebase.storage.UploadTaskSnapshot) => {
+          console.log("Upload img is complete!!!!");
+          uploadImgSnapshot.ref.getDownloadURL().then((url) => {
+            console.log("imageUrl: ", url);
+            this.request.imageUrl = url;
+            //this.messageRequestService.create(this.request);
+          })
+          return this.uploadService.uploadFile(this.selectedNumberRange, numberRangeSubPath);
+        })
+        .then((uploadNumberRangeSnapshot: firebase.storage.UploadTaskSnapshot) => {
+          console.log("Upload number range is complete!!!!");
+          uploadNumberRangeSnapshot.ref.getDownloadURL().then((url) => {
+            console.log("numberRange url: ", url);
+            this.request.numberRangeUrl = url;
+            this.messageRequestService.create(this.request);
+          })
+          //return this.uploadService.uploadFile(this.selectedNumberRange, numberRangeSubPath);
+        });
+    } else if (this.selectedImage) {
+      this.uploadService.uploadFile(this.selectedImage, imageSubPath)
+        .then((uploadSnapshot: firebase.storage.UploadTaskSnapshot) => {
+          console.log("Upload img is complete!!!!");
+          uploadSnapshot.ref.getDownloadURL().then((url) => {
+            console.log("imageUrl: ", url);
+            this.request.imageUrl = url;
+            this.messageRequestService.create(this.request);
+          })
+        });
+    } else {
+      this.uploadService.uploadFile(this.selectedNumberRange, numberRangeSubPath)
+        .then((uploadSnapshot: firebase.storage.UploadTaskSnapshot) => {
+          console.log("Upload number range is complete!!!!");
+          uploadSnapshot.ref.getDownloadURL().then((url) => {
+            console.log("numberRange url: ", url);
+            this.request.numberRangeUrl = url;
+            this.messageRequestService.create(this.request);
+          })
+        });
+    }
   }
 
   onSelectImageChanged(event) {
     this.selectedImage = event.target.files[0];
   }
 
+  onSelectedNumberRangeChanged(event) {
+    this.selectedNumberRange = event.target.files[0];
+  }
+
   resetImage() {
     this.selectedImage = null;
+  }
+
+  resetNumberRange() {
+    this.selectedNumberRange = null;
   }
 
   previewRequest(input, content) {
@@ -111,10 +169,19 @@ export class MessageEditorComponent implements OnInit {
   }
 
   async submitRequest() {
-    this.router.navigate(['/request-history'])
-    this.uploadFile(this.imageBasePath + "/" + this.request.userId);
-    this.messageRequestService.create(this.request);
+    let imageSubPath = this.imageBasePath + this.request.userId;
+    let numberRangeSubPath = this.numberRangeBasePath + this.request.userId;
+    let uid = this.auth.getCurrentUser().uid;
+
+    console.log("waiting 1");
+    this.uploadFile(imageSubPath, numberRangeSubPath);
+
+    let postCredit = this.curAppUser.credit - this.request.creditCost;
+    console.log(postCredit);
+    this.userService.updateCredit(uid, postCredit)
+
     delay(200);
     this.requestTableService.pageSize = 9;
+    this.router.navigate(['/request-history'])
   }
 }

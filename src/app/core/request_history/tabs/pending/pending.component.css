@@ -1,6 +1,9 @@
+.table-wrap {
+  height: 500px;
+  overflow-y: auto;
+}
 
-
-.table-wrap thead th { 
+thead th { 
     position: sticky; top: 0; 
     background-color: #293462;
     color: #faf9f9;

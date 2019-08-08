@@ -21,9 +21,21 @@
 .sidenav {
   background-color: #2d4059;
   padding: 0px;
+  border-right: 2px;
+  height: -webkit-fill-available;
 }
 
 .app {
     scroll-behavior: smooth;
+}
+
+#profileCard {
+    padding-top: 10%;
+    height: 150px;
+    background-color:white;
+    text-align: center;
+    border-right-style: solid;
+    border-width: 2px;
+    border-right-color: #2d4059;
 }
 

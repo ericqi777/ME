@@ -41,12 +41,14 @@ export class UserListComponent implements OnInit {
       this.curAppUser = appUser;
       this.curCredit$ = appUser.credit;
       this.userService.getAllUsers().snapshotChanges().subscribe(snapshot => {
+        this.userList = [];
         snapshot.map(child => {
           let childUser = {
             uid: child.payload.key,
             user: child.payload.val()
           };
 
+          if (childUser.uid == this.curUserId) return;
           if (this.curAppUser.isGod) {
             this.userList.push(childUser);
           } else if (this.curAppUser.isAdmin) {
