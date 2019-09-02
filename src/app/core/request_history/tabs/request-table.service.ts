@@ -1,7 +1,7 @@
 import { AuthService } from './../../../services/auth.service';
 import { MessageRequestService } from './../../../services/message-request.service';
 import { MessageRequest } from './../../../models/message_request';
-import { Injectable, PipeTransform } from '@angular/core';
+import { Injectable, PipeTransform, OnDestroy } from '@angular/core';
 
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 
@@ -81,11 +81,8 @@ export class RequestTableService {
             messageRequest: request.payload.val()
           }
           if (!curUser.isAdmin) {
-            console.log("curID: ", curAppUserId);
-            console.log("childRequestId: ", childRequest.mid);
             
             if (childRequest.messageRequest.userId == curAppUserId) {
-              console.log("none admin should see some message");
               this.requestList.push(childRequest);
             }
           } else {
@@ -142,5 +139,9 @@ export class RequestTableService {
     requests = requests.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize);
     
     return of({ requests, total });
+  }
+
+  OnDestroy() {
+    this.requestList = [];
   }
 }

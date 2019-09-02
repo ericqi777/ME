@@ -32,8 +32,7 @@ export class UserCreateComponent implements OnInit {
     private userService: UserService, 
     private auth: AuthService, 
     private dateService: DateService, 
-    router: Router, 
-    private userTableService: UserTableService
+    router: Router
     ) {
       this.router = router;
       auth.appUser$.subscribe(appUser => {

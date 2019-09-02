@@ -25,6 +25,8 @@ export class ApprovedComponent {
   requests$: Observable<{ mid: string, messageRequest: MessageRequest }[]>;
   total$: Observable<number>;
   curAppUser$: Observable<AppUser>;
+  
+  filterListSize: number;
 
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
 
@@ -39,9 +41,10 @@ export class ApprovedComponent {
       this.requests$ = service.requests$;
       this.requests$ = this.requests$.pipe(map(requestList => {
         requestList = requestList.filter(request => request.messageRequest.requestStatus == RequestStatus.APPROVED);
+        this.filterListSize = requestList.length;
         return requestList;
       }));
-      this.total$ = service.total$;
+      this.total$ = service.total$
       this.curAppUser$ = this.auth.appUser$;
   }
 

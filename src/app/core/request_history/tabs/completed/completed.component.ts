@@ -20,12 +20,17 @@ export class CompletedComponent {
   requests$: Observable<{ mid: string, messageRequest: MessageRequest }[]>;
   total$: Observable<number>;
 
+  filterListSize: number;
+
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
 
   constructor(public service: RequestTableService, private modalService: NgbModal) {
     this.requests$ = service.requests$;
     this.requests$ = this.requests$.pipe(map(requestList => {
       requestList = requestList.filter(request => request.messageRequest.requestStatus == RequestStatus.COMPLETED);
+      this.filterListSize = requestList.length;
+      console.log(this.filterListSize + " <+++ this is the size");
+      
       return requestList;
     }));
     this.total$ = service.total$;

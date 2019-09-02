@@ -28,6 +28,9 @@ export class UserListComponent implements OnInit {
   filteredUserList: { uid: string, user: AppUser }[] = [];
   //total$: Observable<number>;
 
+  page: number;
+  pageSize: number = 10;
+
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
 
   constructor(
@@ -59,6 +62,8 @@ export class UserListComponent implements OnInit {
             childUser.user.parentUser == this.curUserId ? this.userList.push(childUser) : this.userList;
           }
           this.filteredUserList = this.userList;
+
+          this.page = this.filterList.length / this.pageSize;
         })
       });
     });

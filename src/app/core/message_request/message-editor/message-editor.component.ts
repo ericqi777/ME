@@ -1,11 +1,10 @@
+import { RequestTableService } from 'src/app/core/request_history/tabs/request-table.service';
 import { UserService } from 'src/app/services/user.service';
 import { delay } from 'rxjs/operators';
-import { RequestTableService } from './../../request_history/tabs/request-table.service';
 import { MessageRequestService } from './../../../services/message-request.service';
 import { DateService } from './../../../services/date.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { MessageRequest, RequestStatus } from './../../../models/message_request';
-import { Upload } from './../../../models/upload';
 import { UploadService } from '../../../services/upload.service';
 import { Component, OnInit, Input } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -32,6 +31,8 @@ export class MessageEditorComponent implements OnInit {
   numberRangeStoreUrl;
   dateService: DateService;
   curAppUser: AppUser;
+  sentVolume: number = 0;
+  curCredit$: number = 0;
 
   constructor(
     private requestTableService: RequestTableService,
@@ -48,10 +49,14 @@ export class MessageEditorComponent implements OnInit {
       this.uploadService = uploadService;
       this.messageRequestService = messageRequestService;
       this.request = { 
+
         userId : authService.getCurrentUser().uid,
         requestStatus : RequestStatus.PENDING_REVIEW
       }
-      this.auth.appUser$.subscribe(appUser => this.curAppUser = appUser);
+      this.auth.appUser$.subscribe(appUser => {
+        this.curAppUser = appUser;
+        this.curCredit$ = appUser.credit;
+      });
     }
   
   ngOnInit() {
@@ -141,8 +146,8 @@ export class MessageEditorComponent implements OnInit {
   }
 
   formatRequest(input) {
-    let cost = this.selectedImage ? input.volume * 2 : input.volume;
-    this.request.sentVolume = input.volume;
+    let cost = this.sentVolume;
+    this.request.sentVolume = this.sentVolume;
     this.request.textContent = input.textContent;
     this.request.creditCost = cost;
     this.request.approve = "";

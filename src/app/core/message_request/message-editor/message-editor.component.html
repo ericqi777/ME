@@ -26,7 +26,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                     <div class="alert alert-warning alert-sm" role="alert">
-                        ⚠️注意：图片将作为单独短信发送，收信人将看到上图下文两条短信，发送图片消耗额外1单位配额
+                        ⚠️注意：图片将作为单独短信发送，收信人将看到上图下文两条短信
                     </div>
                 </div>
             </div>
@@ -52,15 +52,17 @@
                 <div class="text-primary">发送数量 </div>
                 <div class="form-group">
                     <div class="input-group">
-                        <input required [min]="500" #volume="ngModel" name="volume" id="volume" type="number" class="form-control"
-                            [(ngModel)]="inputContent.sentVolume">
+                        <input type="number" required [min]="500" [(ngModel)]="sentVolume" #creditCost class="form-control" name="creditCost" #add>
                     </div>
-                    <div class="alert alert-danger" *ngIf="volume.touched && volume.invalid">
-                        请输入发送数量
+                    <div class="alert alert-danger" *ngIf="0 > sentVolume">
+                        请输入不小于0单位短信申请配额
+                    </div>
+                    <div class="alert alert-danger" *ngIf="sentVolume > curCredit$">
+                        您的现有配额不足 可分配上限为: {{curCredit$}}
                     </div>
                 </div>
                 
-                <button type="submit" [disabled]="volume.invalid || textContent.invalid" class="btn btn-primary">提交审核</button>
+                <button type="submit" [disabled]="textContent.invalid || sentVolume > curCredit$ || 0 > sentVolume" class="btn btn-primary">提交审核</button>
             </div>
         </form>
     </div>

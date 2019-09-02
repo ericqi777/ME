@@ -16,7 +16,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let appUser of filteredUserList?.slice().reverse()">
+                <tr *ngFor="let appUser of filteredUserList?.slice().reverse() | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
                     <td>
                         <ngb-highlight [result]="appUser.user.userName" [term]="service.searchTerm"></ngb-highlight>
                     </td>
@@ -39,10 +39,10 @@
     </div>
 
     <div class="d-flex justify-content-between p-2">
-        <ngb-pagination [collectionSize]="userList.length" [(page)]="service.page" [pageSize]="service.pageSize">
+        <ngb-pagination [collectionSize]="userList.length" [(page)]="page" [pageSize]="pageSize">
         </ngb-pagination>
 
-        <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
+        <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
             <option [ngValue]="10">每页10条</option>
             <option [ngValue]="20">每页20条</option>
             <option [ngValue]="30">每页30条</option>

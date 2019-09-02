@@ -24,7 +24,7 @@
                     </td>
                     <td>
                         <ngb-highlight 
-                        [result]="request.messageRequest.textContent.length > 40 ? request.messageRequest.textContent.substring(0,38) + '...' : request.messageRequest.textContent" 
+                        [result]="request.messageRequest.textContent.length > 40 ? request.messageRequest.textContent.substring(0,3) + '...' : request.messageRequest.textContent" 
                         [term]="service.searchTerm"></ngb-highlight>
                     </td>
                     <td>
